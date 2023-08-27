@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="mindfaq,Quiz,quiz-game" />
+    <meta name="author" content="MindFAQ" />
+    <meta name="description" content="Play Quiz Games" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MindFAQ</title>
+    <link href="https://db.onlinewebfonts.com/c/158d66d81a28dd80f84115d4b69c146e?family=Woodland+ITC+Demi" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid&display=swap" rel="stylesheet" />
+    <link href="https://db.onlinewebfonts.com/c/2a8cc627ba2fbc54dd7864e1abfd6a47?family=Macho-SemiBold" rel="stylesheet" />
+
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container vh-100">
+        <!-- Header -->
+        <div class="header vh-20">
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                  <a class="navbar-brand" href="#">
+                    <img class="logo" src="../assets/images/logo.png" alt="MindFAQ" />
+                  </a>
+                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarText">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                      <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="#">Saved Games</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link active" href="#">Upgrade</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="#">Log Out</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Content -->
+        <div class="content vh-70 flex-center">
+            <div class="text-center">
+                <a class="join-btn" href="join.html">Join a game</a>
+                <div class="create-game">
+                    or <a href="#" onclick="isLoggedIn()">create a game</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      function isLoggedIn() {
+        const username = window.localStorage.getItem("username");
+        if(username == null || username == "") {
+          window.location.href = "auth.html";
+        } else {
+          window.location.href = "quiz_form.html";
+        }
+      }
+    </script>
+  </body>
+</html>

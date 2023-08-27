@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="mindfaq,Quiz,quiz-game" />
+    <meta name="author" content="MindFAQ" />
+    <meta name="description" content="Play Quiz Games" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MindFAQ | Lobby</title>
+    <link href="https://db.onlinewebfonts.com/c/158d66d81a28dd80f84115d4b69c146e?family=Woodland+ITC+Demi" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid&display=swap" rel="stylesheet" />
+    <link href="https://db.onlinewebfonts.com/c/2a8cc627ba2fbc54dd7864e1abfd6a47?family=Macho-SemiBold" rel="stylesheet" />
+
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+  </head>
+  <body class="bg-light">
+    <div class="container vh-100">
+        <!-- Header -->
+        <div class="header vh-20">
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                  <a class="navbar-brand" href="#">
+                    <img class="logo" src="../assets/images/logo-dark.png" alt="MindFAQ" />
+                  </a>
+                </div>
+            </nav>
+            <div class="nav-centered">
+                <h6 class="player-text mb-0">Players Joined</h6>
+                <h2 class="players-count">
+                    <span class="joined-players">1</span>/<span class="max-players">50</span>
+                </h2>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="vh-60 flex-center">
+            <div class="flex-center" id="code-container">
+                <div class="text-center">
+                    <h4 class="scan-text">Join by Code</h4>
+                    <div class="join-code mb-10 flex-center" id="joinCode">
+                      <input type="number" class="code-text" id="code1" oninput="setMaxLength(this)" />
+                      <input type="number" class="code-text" id="code2" oninput="setMaxLength(this)" />
+                      <input type="number" class="code-text" id="code3" oninput="setMaxLength(this)" />
+                      <input type="number" class="code-text" id="code4" oninput="setMaxLength(this)" />
+                      <input type="number" class="code-text" id="code5" oninput="setMaxLength(this)" />
+                      <input type="number" class="code-text" id="code6" oninput="setMaxLength(this)" />
+                      <input type="hidden" id="fullCode" name="fullCode" />
+                    </div>
+                    <button type="button" class="battle-btn" onclick="joinGame()">Enter the battle</button>
+                </div>
+            </div>
+            <div class="flex-center d-none" id="join-status">
+              You have joined the quiz.
+            </div>
+        </div>
+
+        <div class="vh-20 flex-center">
+            <p class="d-none" id="wait-text">Waiting for the host to start the quiz...</p>
+        </div>
+    </div>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <!-- qrCode -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Socket IO -->
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        function setMaxLength(t) {
+            if ($(t).val().length > 1) {
+                $(t).val($(t).val().slice(0,1));
+            }
+        }
+
+        var elts = document.getElementsByClassName('code-text')
+        Array.from(elts).forEach(function(elt){
+          elt.addEventListener("keyup", function(event) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13 || elt.value.length == 3) {
+              // Focus on the next sibling
+              elt.nextElementSibling.focus()
+            }
+          });
+        });
+        
+        $(document).ready(function async(){
+          if(window.localStorage.getItem("username") == null) {
+            let guestUsername = prompt("Please enter an username to play the quiz.");
+            if (guestUsername == null || guestUsername == "guestUsername") {
+              const username = "user"+Math.floor(100000 + Math.random() * 900000);
+              guestUser({username: username, email: username+"@guest.com", password: ""});
+            } else{
+              checkUsername(guestUsername);
+            }
+          }
+          
+            var location = window.location.href;
+            var url = new URL(location);
+            var jcode = url.searchParams.get("jcode");
+            if(!(jcode == null) && jcode.length == 6) {
+              var jcodeSplitted = jcode.split('');
+              $("#code1").val(jcodeSplitted[0]);
+              $("#code2").val(jcodeSplitted[1]);
+              $("#code3").val(jcodeSplitted[2]);
+              $("#code4").val(jcodeSplitted[3]);
+              $("#code5").val(jcodeSplitted[4]);
+              $("#code6").val(jcodeSplitted[5]);
+              $("#fullCode").val(jcode);
+            }
+
+        });
+
+        function joinGame() {
+          var joinCode = $("#fullCode").val();
+          // Toggle
+          $("#code-container").addClass("d-none");
+          $("#wait-text").removeClass("d-none");
+          $("#wait-text").addClass("d-block");
+          $("#join-status").removeClass("d-none");
+          $("#join-status").addClass("d-block");
+
+          joinQuiz(joinCode);
+
+        }
+
+        function joinQuiz(room_code) {
+          const socket = io("http://localhost:7096/");
+          socket.emit("join-quiz", {
+              username: window.localStorage.getItem("username"),
+              room_code: room_code
+          }, function(res){
+            console.log(res);
+            const data = JSON.parse(res);
+            const quiz_data = data.quiz_data;
+            window.localStorage.setItem("quiz_form_object",JSON.stringify(quiz_data.quiz_form));
+            window.localStorage.setItem("quiz_arr",JSON.stringify(quiz_data.quiz_arr));
+            $(".joined-players").html(res.total_count);
+          });
+        }
+
+        function checkUsername(username) {
+          fetch("http://localhost:7096/user/check-username", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "Accept": "application/json",
+                  "Access-Control-Allow-Origin": "*"
+              },
+              body: JSON.stringify({
+                username: username
+              }),
+          }).then(function(res) {
+              return res.json(); 
+          }).then(function(data) {
+              console.log(data);
+              if(data.status == "error") {
+                let guestUsername = prompt("Please enter an username to play the quiz.");
+                if (guestUsername == null || guestUsername == "guestUsername") {
+                  username = "user"+Math.floor(100000 + Math.random() * 900000);
+                  guestUser({username: username, email: username+"@guest.com", password: ""});
+                } else{
+                  checkUsername(guestUsername);
+                }
+              } else {
+                guestUser({username: username, email: username+"@guest.com", password: ""});
+              }
+              
+          });
+        }
+
+        function guestUser(formProps) {
+          fetch("http://localhost:7096/user/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "Access-Control-Allow-Origin": "*"
+                },
+                body: JSON.stringify(formProps),
+            }).then(function(res) {
+                return res.json(); 
+            }).then(function(data) {
+                console.log(data);
+                window.localStorage.setItem("username", formProps.username);
+            });
+        }
+
+        setInterval(function(){
+          var joinCode = $("#fullCode").val();
+          if(joinCode == null || joinCode == "") {
+
+          } else {
+            fetch("http://localhost:7096/room/user-count", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "Accept": "application/json",
+                  "Access-Control-Allow-Origin": "*"
+              },
+              body: JSON.stringify({
+                room_code: joinCode
+              }),
+            }).then(function(res) {
+                return res.json(); 
+            }).then(function(data) {
+              if(data.status == "success") {
+                $(".joined-players").html(data.data.userCount);
+                if(data.data.quizStarted) {
+                  window.location.href = "game.html?room-code="+joinCode;
+                }
+              }
+            });
+          }
+        }, 2 * 1000);
+        
+    </script>
+  </body>
+</html>

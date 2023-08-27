@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="mindfaq,Quiz,quiz-game" />
+    <meta name="author" content="MindFAQ" />
+    <meta name="description" content="Play Quiz Games" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MindFAQ | Lobby</title>
+    <link href="https://db.onlinewebfonts.com/c/158d66d81a28dd80f84115d4b69c146e?family=Woodland+ITC+Demi" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid&display=swap" rel="stylesheet" />
+    <link href="https://db.onlinewebfonts.com/c/2a8cc627ba2fbc54dd7864e1abfd6a47?family=Macho-SemiBold" rel="stylesheet" />
+
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+  </head>
+  <body class="bg-light">
+    <div class="container vh-100">
+        <!-- Header -->
+        <div class="header vh-20">
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                  <a class="navbar-brand" href="#">
+                    <img class="logo" src="../assets/images/logo-dark.png" alt="MindFAQ" />
+                  </a>
+                </div>
+            </nav>
+            <div class="nav-centered">
+                <h6 class="player-text mb-0">Sign Up/Sign In</h6>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="vh-60 flex-center">
+            <div class="flex-center" id="code-container">
+                <div class="card">
+                    <div class="card-body">
+                        <div id="exTab3" class="container">	
+                            <ul class="nav nav-tabs card-header-tabs" data-bs-tabs="tabs" id="auth-tabs">
+                                <li class="nav-item pr-20">
+                                    <a class="nav-link active" aria-current="true" data-bs-toggle="tab" href="#login">Sign In</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#register">Sign Up</a>
+                                </li>
+                            </ul>
+                        
+                            <div class="tab-content clearfix">
+                                <div class="tab-pane active" id="login">
+                                    <form class="sign-in" action="#" method="POST" id="signIn">
+                                        <div>
+                                            <label for="username_login" class="form-label">Username</label>
+                                            <input type="text" name="username_login" class="form-control" id="username_login">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="password_login" class="form-label">Password</label>
+                                            <input type="password" name="password_login" class="form-control" id="password_login">
+                                        </div>
+                                        <button type="submit" class="auth-btn">Sign In</button>
+                                    </form>
+                                </div>
+                                <div class="tab-pane" id="register">
+                                    <form class="sign-up" action="#" method="POST" id="signUp">
+                                        <div>
+                                            <label for="username" class="form-label">Username</label>
+                                            <input type="text" name="username" class="form-control" id="username">
+                                        </div>
+                                        <div>
+                                            <label for="email" class="form-label">Email</label>
+                                            <input type="email" name="email" class="form-control" id="email">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="password" class="form-label">Password</label>
+                                            <input type="password" name="password" class="form-control" id="password">
+                                        </div>
+                                        <button type="submit" class="auth-btn">Sign Up</button>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        $("#signIn").submit(function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const formProps = Object.fromEntries(formData);
+            fetch("http://localhost:7096/user/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "Access-Control-Allow-Origin": "*"
+                },
+                body: JSON.stringify(formProps),
+            }).then(function(res) {
+                return res.json(); 
+            })
+            .then(function(data) {
+                console.log(data);
+                if(data.status == "error") {
+                    alert(data.message);
+                } else {
+                    const tokenData = parseJwt(data.data);
+                    const username = tokenData.username;
+                    window.localStorage.setItem("username", username);
+                    window.location.href = "quiz_form.html";
+                }
+            });
+        });
+
+        $("#signUp").submit(function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const formProps = Object.fromEntries(formData);
+            fetch("http://localhost:7096/user/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "Access-Control-Allow-Origin": "*"
+                },
+                body: JSON.stringify(formProps),
+            }).then(function(res) {
+                return res.json(); 
+            }).then(function(data) {
+                console.log(data);
+                alert(data.message);
+            });
+        });
+
+        function parseJwt (token) {
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            return JSON.parse(jsonPayload);
+        }
+    </script>
+  </body>
+</html>

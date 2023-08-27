@@ -1,0 +1,422 @@
+/* General */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Woodland ITC Demi", Poppins;
+    font-size: 16px;
+    color: #e7e4e4;
+}
+
+/* Index Page */
+
+body {
+    background-color: #7358f5;
+}
+
+body.bg-light {
+    background-color: #F1E0FC !important;
+}
+
+.logo {
+    width: 200px;
+}
+
+.navbar>.container-fluid {
+    margin-top: 1.5rem;
+}
+
+.navbar-expand-lg .navbar-nav {
+    margin: 0 !important;
+}
+
+.navbar-expand-lg .navbar-collapse {
+    justify-content: flex-end;
+}
+
+.navbar-toggler {
+    background: #fff;
+    outline: none;
+}
+
+.navbar-toggler:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.nav-link {
+    color: #fff;
+    font-family: "Londrina Solid";
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.navbar-nav .nav-link.active {
+    color: #FDEC4F;
+}
+
+.vh-20 {
+    height: 20vh;
+}
+
+.vh-70 {
+    height: 70vh;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.join-btn {
+    font-size: 80px;
+    font-family: "Macho-SemiBold";
+    letter-spacing: -2px;
+    border: 2px solid black;
+    border-radius: 80px;
+    text-decoration: none;
+    background-color: #f1e0fc;
+    color: #1c012e;
+    padding: 20px 60px;
+    -webkit-box-shadow: 10px 10px 0px -6px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 10px 10px 0px -6px rgba(0, 0, 0, 0.75);
+    box-shadow: 10px 10px 0px -6px rgba(0, 0, 0, 0.75);
+}
+
+.create-game {
+    font-size: 30px;
+    font-family: "Londrina Solid", cursive;
+    margin: 30px auto;
+    color: #fff;
+}
+.create-game a {
+    font-size: 30px;
+    font-family: "Londrina Solid", cursive;
+    color: #fff;
+}
+
+/* Quiz Form */
+.navbar-text {
+    font-family: 'Londrina Solid';
+    font-weight: 400;
+    font-size: 34px;
+    line-height: 40px;
+    text-align: right;
+    color: #fff;
+    text-decoration: underline;
+}
+
+.content.flex-center {
+    margin: 60px auto;
+}
+
+.rule {
+    width: 25%;
+    margin-top: 0.5rem;
+    border-top: 1px solid white;
+}
+
+.quiz-form {
+    padding: 10px 0px;
+}
+
+.quiz-form label.game-label {
+    display: block;
+    font-family: 'Londrina Solid', cursive;
+    font-size: 24px;
+    font-weight: 400;
+    text-align: center;
+    color: #F1E0FC;
+    margin-top: 20px;
+}
+
+.quiz-form input {
+    display: none;
+}
+
+input#music-80s {
+    display: block;
+    margin: 0 auto;
+    font-family: 'Londrina Solid', cursive;
+    font-size: 44px;
+    font-weight: 400;
+    text-align: center;
+    background: transparent;
+    outline: none;
+    border: none;
+    color: #FFF;
+    line-height: 0px;
+    margin-bottom: 10px;
+}
+
+.quiz-form input.game-name {
+    display: block;
+    font-family: 'Londrina Solid', cursive;
+    font-size: 66px;
+    font-weight: 400;
+    text-align: center;
+    background: transparent;
+    outline: none;
+    border: none;
+    color: #FFF;
+    line-height: 0px;
+    margin-bottom: 10px;
+}
+
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+.quiz-form input::placeholder, input#music-80s::placeholder {
+    color: #e7e4e442;
+    opacity: 1;
+}
+
+.quiz-form label {
+    font-family: 'Londrina Solid', cursive;
+    font-size: 44px;
+    font-weight: 400;
+    text-align: center;
+    color: rgb(241 224 252 / 20%);
+    padding: 0px 12px;
+}
+
+/* .quiz-form input:checked + label {
+    color: #e7e4e4;
+} */
+
+.quiz-form input:checked + label{
+    color: #FFF !important;
+}
+
+.quiz-form label.quiz-topic {
+    font-family: 'Londrina Solid', cursive;
+    font-size: 24px;
+    font-weight: 400;
+    text-align: center;
+    color: rgb(241 224 252 / 20%);
+    padding: 0px 12px;
+}
+
+button.next-btn {
+    float: right;
+    margin: 40px 10px 50px 0px;
+    font-size: 34px;
+    font-family: "Macho-SemiBold";
+    border: 2px solid black;
+    border-radius: 50px;
+    background-color: #f1e0fc;
+    color: #1C012E;
+    padding: 10px 30px;
+    -webkit-box-shadow: 12px 13px 7px -7px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 12px 13px 7px -7px rgba(0, 0, 0, 0.75);
+    box-shadow: 12px 13px 7px -7px rgba(0, 0, 0, 0.75);
+}
+
+/* Overview Page */
+.back-btn {
+    font-family: 'Londrina Solid';
+    font-weight: 400;
+    font-size: 34px;
+    text-align: center;
+    color: #fff;
+    line-height: 0px;
+    text-decoration: none;
+}
+.overview-title {
+    font-family: 'Londrina Solid', cursive;
+    font-size: 66px;
+    font-weight: 400;
+    text-align: center;
+    color: #F1E0FC;
+}
+
+.m50 {
+    margin: 50px auto;
+}
+
+.m15 {
+    margin: 0px 15vw;
+}
+
+.inline-flex-center {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.question-text, .question-num, .answer-option {
+    font-family: 'Londrina Solid';
+    font-size: 34px;
+    font-weight: 400;
+    color: #F1E0FC;
+    margin-right: 30px;
+}
+
+.question-num {
+    font-size: 44px;
+    color: #FFFFFF;
+}
+.question-text {
+    color: #FFFFFF;
+}
+
+.answer-option.active {
+    color: #FDEC4F;
+}
+
+.rule {
+    width: 70%;
+    border: 1px solid #F1E0FC;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.mb-30 {
+    margin-bottom: 30px;
+}
+
+/* Lobby */
+#qr-code {
+    padding: 10px;
+    background: #fff;
+}
+
+.nav-centered {
+    text-align: center;
+    margin-top: -50px;
+}
+
+.player-text, .players-count, .joined-players, .max-players, .scan-text, .join-code, #wait-text, #join-status {
+    font-family: 'Londrina Solid';
+    font-size: 24px;
+    font-weight: 400;
+    color: #FFFFFF;
+}
+
+.players-count, .joined-players, .max-players {
+    font-size: 66px;
+    color: #7358F5;
+}
+
+.battle-btn {
+    font-family: "Macho-SemiBold";
+    font-size: 34px;
+    font-weight: 400;
+    background-color: #7358F5;
+    color: #FDEC4F;
+    padding: 10px 30px;
+    border-radius: 50px;
+    border: none;
+}
+
+.vh-60 {
+    height: 60vh;
+}
+
+.scan-text {
+    font-size: 34px;
+    color: #7358F5;
+}
+
+.join-code {
+    font-size: 68px;
+    color: #1C012E;
+}
+
+.mr-50 {
+    margin-right: 50px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input.code-text {
+    font-family: 'Londrina Solid';
+    font-size: 34px;
+    height: 60px;
+    width: 50px;
+    margin: 4px;
+    border-radius: 10px;
+    color: #000;
+    text-align: center;
+}
+
+#wait-text, #join-status {
+    font-size: 34px;
+    color: #7358F5;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+/* Loader */
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    margin: 0px auto;
+    animation: spin 2s linear infinite;
+}
+  
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Auth */
+
+#auth-tabs a.nav-link {
+    font-family: 'Londrina Solid';
+    font-size: 34px;
+    font-weight: 400;
+    border-width: 2px;
+    text-align: left;
+    padding: 0px;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    color: #F1E0FC;
+}
+
+#auth-tabs a.nav-link.active {
+    color: #7358F5;
+    border-bottom: 2px solid #7358F5 !important;
+}
+
+#login label.form-label, #register label.form-label {
+    font-family: 'Londrina Solid';
+    font-size: 24px;
+    font-weight: 400;
+    margin-top: 20px;
+    color: #7358F5;
+}
+
+.pr-20 {
+    padding-right: 20px;
+}
+
+.auth-btn {
+    font-family: "Macho-SemiBold";
+    font-size: 24px;
+    font-weight: 400;
+    background-color: #7358F5;
+    color: #FDEC4F;
+    padding: 10px 30px;
+    border-radius: 50px;
+    border: none;
+}
+
+.card-body {
+    padding: 20px 50px;
+}

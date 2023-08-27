@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="mindfaq,Quiz,quiz-game" />
+    <meta name="author" content="MindFAQ" />
+    <meta name="description" content="Play Quiz Games" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MindFAQ | Lobby</title>
+    <link href="https://db.onlinewebfonts.com/c/158d66d81a28dd80f84115d4b69c146e?family=Woodland+ITC+Demi" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid&display=swap" rel="stylesheet" />
+    <link href="https://db.onlinewebfonts.com/c/2a8cc627ba2fbc54dd7864e1abfd6a47?family=Macho-SemiBold" rel="stylesheet" />
+
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+  </head>
+  <body class="bg-light">
+    <div class="container vh-100">
+        <!-- Header -->
+        <div class="header vh-20">
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                  <a class="navbar-brand" href="#">
+                    <img class="logo" src="../assets/images/logo-dark.png" alt="MindFAQ" />
+                  </a>
+                </div>
+            </nav>
+            <div class="nav-centered">
+                <h6 class="player-text mb-0">Players Joined</h6>
+                <h2 class="players-count">
+                    <span class="joined-players">1</span>/<span class="max-players">50</span>
+                </h2>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="vh-60 flex-center">
+            <div class="flex-center">
+                <div class="text-center mr-50">
+                    <h4 class="scan-text">Scan</h4>
+                    <div id="qr-code"></div>
+                </div>
+                <div class="text-center">
+                    <h4 class="scan-text">Join by Code</h4>
+                    <h2 class="join-code" id="jcode">894 322</h2>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="vh-20 flex-center">
+            <button type="button" class="battle-btn" onclick="startQuiz()">To Battle!</button>
+        </div>
+    </div>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <!-- qrCode -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script type="text/javascript">
+
+        let qrCode;
+        function generateQrCode(qrContent) {
+            return new QRCode("qr-code", {
+                text: qrContent,
+                width: 256,
+                height: 256,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H,
+            });
+        }
+        
+        $(document).ready(function(){
+            const username = window.localStorage.getItem("username");
+                if(username == null || username == "") {
+                window.location.href = "auth.html";
+            }
+            const code_obj = JSON.parse(window.localStorage.getItem("code_obj"));
+            let jcode = code_obj.room_code;
+            $("#jcode").html(jcode);
+            let qrContent = 'http://localhost/MindFAQ/src/join.html?jcode='+jcode;
+            if (qrCode == null) {
+                // Generate code initially
+                qrCode = generateQrCode(qrContent);
+            } else {
+                // If code already generated then make
+                // again using same object
+                qrCode.makeCode(qrContent);
+            }
+        });
+
+        function startQuiz() {
+            const code_obj = JSON.parse(window.localStorage.getItem("code_obj"));
+            fetch("http://localhost:7096/room/start-quiz", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "Accept": "application/json",
+                  "Access-Control-Allow-Origin": "*"
+              },
+              body: JSON.stringify({
+                room_code: code_obj.room_code
+              }),
+          }).then(function(res) {
+              return res.json(); 
+          }).then(function(data) {
+            console.log(data);
+            window.location.href = "game.html?room-code="+code_obj.room_code;
+          });
+        }
+
+        setInterval(function(){
+            const code_obj = JSON.parse(window.localStorage.getItem("code_obj"));
+            fetch("http://localhost:7096/room/user-count", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "Accept": "application/json",
+                  "Access-Control-Allow-Origin": "*"
+              },
+              body: JSON.stringify({
+                room_code: code_obj.room_code
+              }),
+          }).then(function(res) {
+              return res.json(); 
+          }).then(function(data) {
+            if(data.status == "success") {
+                $(".joined-players").html(data.data.userCount);
+            }
+          });
+        }, 5 * 1000);
+
+    </script>
+  </body>
+</html>

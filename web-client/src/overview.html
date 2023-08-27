@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="mindfaq,Quiz,quiz-game" />
+    <meta name="author" content="MindFAQ" />
+    <meta name="description" content="Play Quiz Games" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MindFAQ | Overview</title>
+    <link href="https://db.onlinewebfonts.com/c/158d66d81a28dd80f84115d4b69c146e?family=Woodland+ITC+Demi" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid&display=swap" rel="stylesheet" />
+    <link href="https://db.onlinewebfonts.com/c/2a8cc627ba2fbc54dd7864e1abfd6a47?family=Macho-SemiBold" rel="stylesheet" />
+
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                  <a class="navbar-brand" href="#">
+                    <img class="logo" src="../assets/images/logo.png" alt="MindFAQ" />
+                  </a>
+                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarText">
+                    <span class="navbar-text">
+                        Save & Quit
+                    </span>
+                  </div>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Content -->
+        <div class="content text-center">
+            <div class="m50">
+                <a href="quiz_form.html" class="back-btn">Back</a>
+                <h2 class="overview-title">Overview</h2>
+            </div>
+            <div class="m15 text-left">
+              <div id="loader" class="d-none">
+                <div class="loader"></div>
+                <h4 class="question-text text-center mt-20">Loading... Please Wait...</h4>
+              </div>
+              <div id="questions-list">
+                <!-- <div class="inline-flex-center mb-30">
+                    <div class="question-num">1.</div>
+                    <div class="text-left">
+                        <h4 class="question-text">What year was the iPhone invented</h4>
+                        <div class="text-left">
+                            <span class="answer-option">2006</span>
+                            <span class="answer-option">2010</span>
+                            <span class="answer-option">2012</span>
+                            <span class="answer-option active">2005</span>
+                        </div>
+                        <div class="rule"></div>
+                    </div>
+                </div> -->
+              </div>
+            </div>
+        </div>
+        <div>
+          <button type="button" class="next-btn" onclick="launchQuiz(this)">Launch Quiz</button>
+        </div>
+    </div>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+
+    <!-- Socket IO -->
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function async(){
+          const username = window.localStorage.getItem("username");
+            if(username == null || username == "") {
+            window.location.href = "auth.html";
+          }
+            $("#loader").removeClass("d-none");
+            $("#questions-list").addClass("d-none");
+            $(".next-btn").addClass("d-none");
+            const quiz_form_object = JSON.parse(window.localStorage.getItem("quiz_form_object"));
+            fetchQuestions(quiz_form_object['quiz-topic'], quiz_form_object['num-questions'], quiz_form_object['difficulty-level'], quiz_form_object['language']);
+            
+        });
+
+        function fetchQuestions(quizTopic, questionsCount, difficultyLevel, language) {
+          const API_KEY = "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";
+          const options ={
+            method: "POST",
+            headers: {
+                "Authorization": 'Bearer '+API_KEY,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                model: "gpt-3.5-turbo",
+                messages: [{role :"user", content: "Generate "+questionsCount+" mcq questions on "+quizTopic +" with difficulty level of "+difficultyLevel+" along with the answer at the end in "+language+" language and provide the response in json format."}],
+                max_tokens: 4000,
+            })
+          };
+          fetch("https://api.openai.com/v1/chat/completions",options)
+          .then(function(res) {return res.text()})
+          .then(function(data) {
+            var questionsObject = JSON.parse(data);
+            console.log(questionsObject);
+            var questionArr = questionsObject.choices;
+            var questionsList = questionArr[0].message.content;
+            questionsList = JSON.parse(questionsList);
+            showQuestions(questionsList.questions);
+          
+            $("#loader").addClass("d-none");
+            $("#questions-list").removeClass("d-none");
+            $(".next-btn").removeClass("d-none");
+          });
+            
+        }
+
+        function showQuestions(questionsList) {
+          for (const index in questionsList) {
+            if (Object.hasOwnProperty.call(questionsList, index)) {
+              const quizObject = questionsList[index];
+              $("#questions-list").append(`<div class="inline-flex-center mb-30" id="q`+ (parseInt(index) + 1) +`">
+                  <div class="question-num">`+ (parseInt(index) + 1) +`.</div>
+                  <div class="text-left">
+                      <h4 class="question-text">`+quizObject.question+`</h4>
+                      <div class="text-left">
+                          <span class="answer-option">`+quizObject.options[0]+`</span>
+                          <span class="answer-option">`+quizObject.options[1]+`</span>
+                          <span class="answer-option">`+quizObject.options[2]+`</span>
+                          <span class="answer-option">`+quizObject.options[3]+`</span>
+                      </div>
+                      <div class="rule"></div>
+                  </div>
+              </div>`);
+              $('#q'+(parseInt(index) + 1)+' .answer-option').each(function(i, obj) {
+                  if($(obj).html().trim() == quizObject.answer) {
+                    $(obj).addClass("active");
+                  }
+              });
+            }
+          }
+          
+          window.localStorage.setItem("quiz_arr", JSON.stringify(questionsList));
+        }
+
+        function launchQuiz(t) {
+          // getting data of quiz
+          const quiz_form_object = JSON.parse(window.localStorage.getItem("quiz_form_object"));
+          const quiz_arr = JSON.parse(window.localStorage.getItem("quiz_arr"));
+          const room_code = Math.floor(100000 + Math.random() * 900000);
+          window.localStorage.setItem("code_obj", JSON.stringify({room_code: room_code}));
+          const socket = io("http://localhost:7096/");
+          socket.emit("create-quiz", {
+              username: window.localStorage.getItem('username'),
+              quiz: {
+                  quiz_form: quiz_form_object,
+                  quiz_arr: quiz_arr
+              },
+              room_code: room_code
+          }, function(res){
+            // console.log(res);
+            window.location.href = 'lobby.html';
+          }); 
+        }
+    </script>
+  </body>
+</html>

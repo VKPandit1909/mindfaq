@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="keywords" content="mindfaq,Quiz,quiz-game" />
+    <meta name="author" content="MindFAQ" />
+    <meta name="description" content="Play Quiz Games" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MindFAQ | Game</title>
+    <link href="https://db.onlinewebfonts.com/c/158d66d81a28dd80f84115d4b69c146e?family=Woodland+ITC+Demi" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Londrina+Solid&display=swap" rel="stylesheet" />
+    <link href="https://db.onlinewebfonts.com/c/2a8cc627ba2fbc54dd7864e1abfd6a47?family=Macho-SemiBold" rel="stylesheet" />
+
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../assets/css/game.css" />
+  </head>
+  <body>
+    <div class="container vh-100">
+        <div id="question-show" class="d-none">
+            <div class="vh-10 flex-center">
+                <p class="text-center question-num">0</p>
+            </div>
+            <div class="vh-90 flex-center">
+                <p class="text-center question-title"></p>
+            </div>
+        </div>
+        <div id="question-options" class="d-none">
+            <div class="vh-30 flex-end">
+                <p class="text-center question-text"></p>
+            </div>
+            <div class="vh-40 flex-center">
+                <div id="options">
+                    <div class="text-center mb-20">
+                        <span class="option" id="opt-1">1</span>
+                        <span class="option" id="opt-2">2</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="option" id="opt-3">3</span>
+                        <span class="option" id="opt-4">4</span>
+                    </div>
+                </div>
+            </div>
+            <div id="points" class="vh-30 flex-start">
+                
+            </div>
+        </div>
+        <div id="loader" class="d-none vh-100 flex-center-wrapped">
+            <div class="loader"></div>
+            <h4 class="question-text text-center mt-20 width-100">Loading... Please Wait...</h4>
+        </div>
+        <div id="end-results" class="vh-100 container d-none">
+            <div></div>
+            <p class="text-center results-text">End Results</p>
+            <div class="width-100" id="winners">
+                
+            </div>
+            <div class="width-100 text-center">
+                <p class="text-center" id="end-btn">End Quiz</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <!-- qrCode -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Socket IO -->
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        
+        $(document).ready(function async(){
+            var location = window.location.href;
+            var url = new URL(location);
+            var roomCode = url.searchParams.get("room-code");
+            console.log(roomCode);
+            if(!(roomCode == null) && roomCode.length == 6) {
+                var points_obj = {
+                    roomCode: roomCode,
+                    username: window.localStorage.getItem("username"),
+                    points: 0
+                };
+                window.localStorage.setItem("quiz_points", JSON.stringify(points_obj));
+                showQuestion();
+            } else {
+                window.location.href = "/";
+            }
+
+        });
+
+        function showQuestion() {
+            const quiz_form_object = JSON.parse(window.localStorage.getItem("quiz_form_object"));
+            const quiz_arr = JSON.parse(window.localStorage.getItem("quiz_arr"));
+            var indexPos = parseInt($("#question-show .question-num").html().trim());
+            if(quiz_arr.length == indexPos) {
+                submitQuiz();
+            } else {
+                // console.log(quiz_arr[parseInt(indexPos)]);
+                $("#question-show .question-num").html(indexPos + 1);
+                $("#question-show .question-title").html(quiz_arr[parseInt(indexPos)].question)
+                $("#question-show").removeClass("d-none");
+                $("#question-show").addClass("d-block");
+                $("#question-options").removeClass("d-block");
+                $("#question-options").addClass("d-none");
+                setTimeout(() => {
+                    $("#question-options .question-text").html(quiz_arr[parseInt(indexPos)].question);
+                    $("#question-options .option").each(function(index, obj) {
+                        $(obj).html(quiz_arr[parseInt(indexPos)].options[index]);
+                    });
+                    $("#question-options .option").css("opacity", "1");
+                    $("#question-show").removeClass("d-block");
+                    $("#question-show").addClass("d-none");
+                    $("#question-options").removeClass("d-none");
+                    $("#question-options").addClass("d-block");
+                    // console.log(quiz_form_object['seconds-answer']);
+                    
+                }, 2000);
+
+                // Countdown Timer
+                $("#points").html(`<div class="otp-countdown"  id="timer-countdown"></div>`);
+                window.timeLeft = parseInt(quiz_form_object['seconds-answer']) + 2;
+                window.isAnswered = false;
+                function countdown() {
+                    window.timeLeft--;
+                    $("#timer-countdown").html(window.timeLeft);
+                    if (window.timeLeft > 0) {
+                        setTimeout(countdown, 1000);
+                    } else {
+                        if(!window.isAnswered) {
+                            showPoints("",0);
+                        } else {
+                            showQuestion();
+                        }
+                        // showPoints("",0);
+                    }
+                };
+
+                setTimeout(countdown, 1000);
+            }
+        }
+
+        function showPoints(selectedOption, seconds) {
+            const quiz_arr = JSON.parse(window.localStorage.getItem("quiz_arr"));
+            var indexPos = parseInt($("#question-show .question-num").html().trim());
+            var output_ans = "Wrong!";
+            var output_points = 0;
+            var pointsAns = 0;
+            var style = "style='color:#D02E29'";
+            if(selectedOption == quiz_arr[indexPos - 1].answer) {
+                output_ans = "Correct!";
+                output_points = "+"+(parseInt(seconds) + 1) * 15;
+                pointsAns = (parseInt(seconds) + 1) * 15;
+                style = "style='color:#29D045'";
+            }
+            if(selectedOption == "") {
+                output_ans = "Skipped!"
+            }
+            $("#points").html(`
+                <div class="text-center">
+                    <p class="text-center" id="output_ans" `+style+`>`+output_ans+`</p>
+                    <p class="text-center" id="output_points" `+style+`>`+output_points+`p</p>
+                </div>
+            `);
+
+            // Setting the points
+            var pointsObj = JSON.parse(window.localStorage.getItem("quiz_points"));
+            pointsObj.points = parseInt(pointsObj.points) + pointsAns;
+            // console.log(pointsObj);
+            window.localStorage.setItem("quiz_points", JSON.stringify(pointsObj));
+            if(quiz_arr.length == indexPos) {
+                submitQuiz();
+            } else {
+                setTimeout(() => {
+                    if(window.timeLeft <= 0) {
+                        showQuestion();
+                    }
+                }, 2000);
+            }
+        }
+
+        function submitQuiz() {
+            $("#question-show").removeClass("d-block");
+            $("#question-show").addClass("d-none");
+            $("#question-options").removeClass("d-block");
+            $("#question-options").addClass("d-none");
+            $("#loader").removeClass("d-none");
+            fetch("http://localhost:7096/room/submit-quiz", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "Accept": "application/json",
+                  "Access-Control-Allow-Origin": "*"
+              },
+              body: window.localStorage.getItem("quiz_points"),
+            }).then(function(res) {
+                return res.json(); 
+            }).then(function(data) {
+                // console.log(data);
+                if(data.status == "success") {
+                    if(data.data.quizStarted) {
+                        submitQuiz();
+                    } else {
+                        showEndResults();
+                    }
+                }
+            });
+        }
+
+        function showEndResults() {
+            var quiz_points = JSON.parse(window.localStorage.getItem("quiz_points"));
+            var roomCode = quiz_points.roomCode;
+            fetch("http://localhost:7096/room/get-users-results", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "Accept": "application/json",
+                  "Access-Control-Allow-Origin": "*"
+              },
+              body: JSON.stringify({
+                roomCode: roomCode
+              }),
+            }).then(function(res) {
+                return res.json(); 
+            }).then(function(data) {
+                console.log(data);
+                $("body").css("background-color", "#F1E0FC");
+                $("#loader").addClass("d-none");
+                $("#end-results").removeClass("d-none");
+                var users = data.data.users;
+                users.sort(function (a, b) {return a.points - b.points});
+                for (const index in users) {
+                    if (Object.hasOwnProperty.call(users, index) && index < 3) {
+                        const user = users[index];
+
+                        $("#winners").append(`
+                            <div class="flex-center" id="winner-`+(parseInt(index)+1)+`">
+                                <p class="result-text width-10">`+(parseInt(index)+1)+`</p>
+                                <p class="result-text width-35">`+user.username+`</p>
+                                <p class="result-text text-right width-10">`+user.points+`</p>
+                            </div>
+                        `);
+                    }
+                }
+                
+            });
+        }
+
+        $("#question-options .option").click(function(objs) {
+            var selectedOption = "";
+            $("#question-options .option").each(function(index, obj) {
+                if($(objs.target).html() == $(obj).html()) {
+                    $(obj).css("opacity", "1");
+                    selectedOption = $(obj).html();
+                } else {
+                    $(obj).css("opacity", "0.4");
+                }
+            });
+            var seconds = $("#timer-countdown").html();
+            // window.timeLeft = 0;
+            window.isAnswered = true;
+            showPoints(selectedOption, seconds);
+        });
+
+        window.onbeforeunload = function(){
+            var message = 'Are you sure you want to reload?';
+            if (typeof evt == 'undefined') {
+                evt = window.event;
+            }
+            if (evt) {
+                evt.returnValue = message;
+            }
+            return message;
+        }
+
+
+    </script>
+  </body>
+</html>
